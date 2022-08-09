@@ -1,45 +1,67 @@
+#include <stdarg.h>
+#include <stdio.h>
+#include <unistd.h>
 #include "main.h"
+
 /**
- * _printf - is a function that selects the correct function to print.
- * @format: identifier to look for.
- * Return: the length of the string.
+ * _printf - prints a string in a formatted way
+ * @format: string to print (char *)
+ * @...: variadic parameters (unknown)
+ *
+ * Return: number of characters printed
  */
-int _printf(const char * const format, ...)
+
+int _printf(const char *format, ...)
 {
-	convert_match m[] = {
-		{"%s", printf_string}, {"%c", printf_char},
-		{"%%", printf_37},
-		{"%i", printf_int}, {"%d", printf_dec}, {"%r", printf_srev},
-		{"%R", printf_rot13}, {"%b", printf_bin}, {"%u", printf_unsigned},
-		{"%o", printf_oct}, {"%x", printf_hex}, {"%X", printf_HEX},
-		{"%S", printf_exclusive_string}, {"%p", printf_pointer}
-	};
-
+	int i = 0;
+	int count = 0;
+	int value = 0;
 	va_list args;
-	int i = 0, j, len = 0;
-
 	va_start(args, format);
-	if (format == NULL || (format[0] == '%' && format[1] == '\0'))
+	int (*f)(va_list);
+	
+	/*Prevent parsing a null pointer*/
+	if (format == NULL)
 		return (-1);
-
-Here:
-	while (format[i] != '\0')
-	{
-		j = 13;
-		while (j >= 0)
+	
+	/*Print each character of string*/
+	while (format[i])
+	{	
+		if (format[i] != '%')
 		{
-			if (m[j].id[0] == format[i] && m[j].id[1] == format[i + 1])
-			{
-				len += m[j].f(args);
-				i = i + 2;
-				goto Here;
-			}
-			j--;
+			value = write(1,&format[i],1);
+			count = count + value;
+			i++;
+			continue;
 		}
-		_putchar(format[i]);
-		len++;
-		i++;
+
+		if (format[i] == '%')
+		{
+			f = check_specifier(&format[i + 1]);
+			if (f != NULL)
+			{
+				value = f(args);
+				count = count + value;
+				i = i + 2;
+				continue;
+			}
+
+			if (format[i + 1] == '\0')
+			{
+				break;
+			}
+
+			if (format[i + 1] != '\0')
+			{
+				value = write(1, &format[i + 1], 1);
+				count = count + value;
+                        	i = i + 2;
+                        	continue;
+			}
+
+
+		}
 	}
-	va_end(args);
-	return (len);
+
+	return (count);
 }
