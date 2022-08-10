@@ -1,45 +1,48 @@
 #include "main.h"
-/**
- * _printf - is a function that selects the correct function to print.
- * @format: identifier to look for
- * Return: the length of the string.
- */
-int _printf(const char * const format, ...)
-{
-	convert_match m[] = {
-		{"%s", printf_string}, {"%c", printf_char},
-		{"%%", printf_37},
-		{"%i", printf_int}, {"%d", printf_dec}, {"%r", printf_srev},
-		{"%R", printf_rot13}, {"%b", printf_bin}, {"%u", printf_unsigned},
-		{"%o", printf_oct}, {"%x", printf_hex}, {"%X", printf_HEX},
-		{"%S", printf_exclusive_string}, {"%p", printf_pointer}
-	};
 
+/**
+  *_printf - displays to the stdout according to a format
+  *@format: format string containg the characters and specifiers
+  *Description: This function calls get_print(). get_priint() function
+  *determines what to print depending on the format
+  *specifiers contained in @fmt
+  *Return: length of the formatted output string.
+  */
+
+int _printf(const char *format, ...)
+{
+	int (*pfunc)(va_list, flags_t *);
+	const char *p;
 	va_list args;
-	int i = 0, j, len = 0;
+	flags_t flags = {0, 0, 0};
+
+	register int count = 0;
 
 	va_start(args, format);
-	if (format == NULL || (format[0] == '%' && format[1] == '\0'))
+	if (!format || (format[0] == '%' && !format[1]))
 		return (-1);
-
-Here:
-	while (format[i] != '\0')
+	if (format[0] == '%' && format[1] == ' ' && !format[2])
+		return (-1);
+	for (p = format; *p; p++)
 	{
-		j = 13;
-		while (j >= 0)
+		if (*p == '%')
 		{
-			if (m[j].id[0] == format[i] && m[j].id[1] == format[i + 1])
+			p++;
+			if (*p == '%')
 			{
-				len += m[j].f(args);
-				i = i + 2;
-				goto Here;
+				count += _putchar('%');
+				continue;
 			}
-			j--;
-		}
-		_putchar(format[i]);
-		len++;
-		i++;
+			while (get_flag(*p, &flags))
+				p++;
+			pfunc = get_print(*p);
+			count += (pfunc)
+				? pfunc(args, &flags)
+				: _printf("%%%c", *p);
+		} else
+			count += _putchar(*p);
 	}
+	_putchar(-1);
 	va_end(args);
-	return (len);
+	return (count);
 }
