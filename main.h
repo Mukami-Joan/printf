@@ -48,7 +48,7 @@
  *
  *     * @fn: The function associated.
  *
- *      */
+ */
 
 struct fmt
 
@@ -74,7 +74,7 @@ struct fmt
  *
  *     * @fm_t: The function associated.
  *
- *      */
+ */
 
 typedef struct fmt fmt_t;
 
@@ -229,5 +229,4 @@ long int convert_size_number(long int num, int size);
 long int convert_size_unsgnd(unsigned long int num, int size);
 
 
-
-#endif /* MAIN_H */
+#endif/* MAIN_H */
