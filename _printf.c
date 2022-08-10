@@ -6,9 +6,9 @@
 /**
  * _printf - prints a string in a formatted way
  * @format: string to print (char *)
- * @...: variadic parameters (unknown)
+ * @...: variadic parameters
  *
- * Return: number of characters printed
+ * Return: The number of characters printed 
  */
 
 int _printf(const char *format, ...)
