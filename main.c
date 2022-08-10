@@ -4,7 +4,7 @@
 
 /**
  * main - test file
- * Program starts execution from here.
+ * Program starts execution from here
  *
  * Return: always 0
  */
